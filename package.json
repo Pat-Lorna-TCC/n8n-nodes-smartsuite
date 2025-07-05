@@ -40,8 +40,8 @@
     "test": "jest"
   },
   "publishConfig": {
-  "access": "public"
-}
+    "access": "public"
+  },
   "prettier": {
     "printWidth": 100,
     "tabWidth": 2,
