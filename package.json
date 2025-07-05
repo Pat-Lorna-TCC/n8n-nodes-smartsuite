@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-smartsuite",
+  "name": "n8n-nodes-smartsuite-v2",
   "version": "2.0.0",
   "description": "n8n community node for SmartSuite",
   "keywords": [
@@ -31,6 +31,7 @@
     "dist"
   ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "rimraf dist && tsc && gulp icons",
     "dev": "tsc --watch",
     "lint": "eslint src/**/*.ts",
@@ -38,6 +39,9 @@
     "generate:tests": "node scripts/generate-tests.js",
     "test": "jest"
   },
+  "publishConfig": {
+  "access": "public"
+}
   "prettier": {
     "printWidth": 100,
     "tabWidth": 2,
