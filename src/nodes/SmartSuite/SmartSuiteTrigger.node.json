@@ -1,0 +1,14 @@
+{
+  "node":           "n8n-nodes-smartsuite.smartSuiteTrigger",
+  "nodeVersion":    "1.0",
+  "codexVersion":   "1.0",
+  "categories":     ["Triggers"],
+  "subcategories":  ["No-Code", "Database"],
+  "aliases":        ["Smart Suite"],
+  "keywords":       ["smartsuite","no-code","database","records","tables","automation"],
+  "resources": {
+    "primaryDocumentation": [
+      { "url": "https://developers.smartsuite.com/docs/intro" }
+    ]
+  }
+}

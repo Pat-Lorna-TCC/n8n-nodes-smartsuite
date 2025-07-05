@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+npm-debug.log
+
+# Build
+/dist/
+/build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# NPM package files
+*.tgz
+
+# Windsurf
+.windsurfrules
+
+# Batch files
+*.bat
+
+# Temp Backups
+.backups
+
+# VSCode
+.vscode

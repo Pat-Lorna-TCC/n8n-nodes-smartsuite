@@ -1,0 +1,48 @@
+{
+  "node":         "smartsuite",
+  "nodeVersion":  "2.0",
+  "codexVersion": "1.0",
+  "sections": [
+    {
+      "name":       "Record Actions",
+      "properties": [
+        "getRecord",
+        "listRecords",
+        "searchRecords",
+        "createRecord",
+        "updateRecord",
+        "deleteRecord"
+      ]
+    },
+    {
+      "name":       "Table Actions",
+      "properties": [
+        "listTables",
+        "getTable",
+        "createTable",
+        "createTableField"
+      ]
+    },
+    {
+      "name":       "Solution Actions",
+      "properties": [
+        "listSolutions",
+        "getSolution"
+      ]
+    },
+    {
+      "name":       "Org Management Actions",
+      "properties": [
+        "getCurrentUser",
+        "listMembers",
+        "listTeams"
+      ]
+    },
+    {
+      "name":       "Triggers ⚡",
+      "properties": [
+        "smartSuiteTrigger"
+      ]
+    }
+  ]
+}
