@@ -10,15 +10,17 @@ export class SmartSuiteApi implements ICredentialType {
   displayName = 'SmartSuite API';
   icon: Icon = 'file:SmartSuiteApi.svg';
   documentationUrl = 'https://developers.smartsuite.com/docs/authentication';
+
   properties: INodeProperties[] = [
     {
-      displayName: 'API Key',
+      displayName: 'API Key (No Token Required)',
       name: 'apiKey',
       type: 'string',
       typeOptions: { password: true },
       default: '',
       required: true,
-      description: 'Your SmartSuite API key',
+      description:
+        'Your SmartSuite API key (just the raw token—do not include “Token ”).',
     },
     {
       displayName: 'Account ID',
@@ -26,7 +28,8 @@ export class SmartSuiteApi implements ICredentialType {
       type: 'string',
       default: '',
       required: true,
-      description: 'Your SmartSuite Account ID',
+      description:
+        'Your SmartSuite workspace ID (the 8-character identifier).',
     },
     {
       displayName: 'Base URL',
