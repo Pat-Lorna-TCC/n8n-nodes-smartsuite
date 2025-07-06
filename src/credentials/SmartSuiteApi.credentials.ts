@@ -2,6 +2,7 @@
 import type {
   ICredentialType,
   INodeProperties,
+  IAuthenticateGeneric,
   Icon,
 } from 'n8n-workflow';
 
@@ -11,19 +12,30 @@ export class SmartSuiteApi implements ICredentialType {
   icon: Icon = 'file:SmartSuiteApi.svg';
   documentationUrl = 'https://developers.smartsuite.com/docs/authentication';
 
+  // ← add **this** back
+  authenticate: IAuthenticateGeneric = {
+    type: 'generic',
+    properties: {
+      headers: {
+        Authorization: 'Token {{$credentials.apiKey}}',
+        'Account-Id': '{{$credentials.accountId}}',
+      },
+    },
+  };
+
   properties: INodeProperties[] = [
     {
-      displayName: 'API Key (No Token Required)',
+      displayName: 'API Token (No "Token” prefix)',
       name: 'apiKey',
       type: 'string',
       typeOptions: { password: true },
       default: '',
       required: true,
       description:
-        'Your SmartSuite API key (just the raw token—do not include “Token ”).',
+        'Your SmartSuite API key (raw token only—do not include “Token”).',
     },
     {
-      displayName: 'Account ID',
+      displayName: 'Workspace ID',
       name: 'accountId',
       type: 'string',
       default: '',
