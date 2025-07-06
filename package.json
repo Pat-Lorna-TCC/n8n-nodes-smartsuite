@@ -49,7 +49,7 @@
     "trailingComma": "all"
   },
   "n8n": {
-    "n8nNodesApiVersion": 2,
+    "nodesApiVersion": 2,
     "nodes": "dist/nodes",
     "credentials": "dist/credentials",
     "nodeTypes": {
