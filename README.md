@@ -1,6 +1,7 @@
 # n8n-nodes-smartsuite
 
-This is an n8n community node for SmartSuite. It allows you to interact with SmartSuite's API to manage resources across your SmartSuite solutions. **v2.0.0**.
+This is an n8n community node for SmartSuite. It allows you to interact with SmartSuite's API to manage resources across your SmartSuite solutions. 
+
 This a major rewrite based on n8n recommendation to use the Airtable node as a template.
 
 ## Features
