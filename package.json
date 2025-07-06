@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-smartsuite",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "n8n community node for SmartSuite",
   "keywords": [
     "n8n-community-node-package",
@@ -26,16 +26,12 @@
   },
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "dist/nodes/SmartSuite/SmartSuite.node.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist/index.js",
-    "dist/index.js.map",
-    "dist/index.d.ts",
-    "dist/credentials/",
-    "dist/nodes/"
+    "dist/"
   ],
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "build": "rimraf dist && tsc && gulp icons",
     "dev": "tsc --watch",
     "lint": "eslint src/**/*.ts",

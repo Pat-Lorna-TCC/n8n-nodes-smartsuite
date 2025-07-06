@@ -12,7 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
   "include": [
     "src",
@@ -21,8 +23,11 @@
   "exclude": [
     "node_modules",
     "dist",
+    "scripts",
+    "src/**/__tests__/**",
+    "src/**/*.test.ts",
     "__tests__",
-    "__mocks__",
-    "scripts"
-    ]
+  "src/**/__mocks__/**",
+    "src/**/__testHelpers__/**"
+  ]
 }
