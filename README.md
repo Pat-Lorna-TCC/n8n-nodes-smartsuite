@@ -109,7 +109,7 @@ To use this node, you'll need to set up your SmartSuite API credentials:
 3. Generate a new API key
 4. In n8n, add your SmartSuite credentials:
    - **API Key**: Your SmartSuite API key
-   - **Base URL**: `https://api.smartsuite.com/v1`
+   - **Base URL**: `https://app.smartsuite.com/api/v1`
 
 ## Security & Compliance
 
