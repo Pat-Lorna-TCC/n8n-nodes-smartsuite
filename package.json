@@ -28,7 +28,11 @@
   "main": "dist/index.js",
   "types": "dist/nodes/SmartSuite/SmartSuite.node.d.ts",
   "files": [
-    "dist"
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/index.d.ts",
+    "dist/credentials/",
+    "dist/nodes/"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
