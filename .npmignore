@@ -1,2 +1,15 @@
+# macOS metadata
 .DS_Store
+
+# TypeScript build info
 *.tsbuildinfo
+
+# Exclude mocks and tests from your dist folder
+dist/__mocks__/
+dist/nodes/**/__tests__/
+
+# (Optional) you can also ignore your source and test folders entirely,
+# since you only need dist/ in the package.
+src/
+__tests__/
+*.log

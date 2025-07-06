@@ -144,17 +144,18 @@ This node has some known security vulnerabilities in its dependencies:
 If you discover a security vulnerability in this node, please report it responsibly:
 
 1. Do not create public issues for security vulnerabilities
-2. Email security details to: [jacobwoodward@gmail.com](mailto:jacobwoodward@gmail.com)
+2. Email security details to: [patandlorna@patandlorna.com](mailto:patandlorna@patandlorna.com)
 3. Include a detailed description and steps to reproduce
 
-We will respond to security reports within 48 hours.
+We will respond to security reports A.S.A.P.
 
 ## Resources
 
-- [SmartSuite API Documentation](https://docs.smartsuite.com/api)
-- [n8n Community Nodes Documentation](https://docs.n8n.io/integrations/community-nodes/)
+- [SmartSuite API Documentation](https://developers.smartsuite.com/docs/intro)
+- [n8n Main Website](https://n8n.io/)
+- [n8n Community Nodes Documentation](https://docs.n8n.io/integrations/community-nodes/build-community-nodes/)
 - [n8n Community Forum](https://community.n8n.io/)
-- [n8n AI Agent Documentation](https://docs.n8n.io/ai-agent/)
+- [n8n AI Functionality Documentation](https://docs.n8n.io/advanced-ai/)
 
 ## License
 
