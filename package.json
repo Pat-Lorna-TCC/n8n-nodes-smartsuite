@@ -49,23 +49,14 @@
     "trailingComma": "all"
   },
   "n8n": {
-    "nodesApiVersion": 2,
-    "nodes": "dist/nodes",
-    "credentials": "dist/credentials",
-    "nodeTypes": {
-      "smartsuite": {
-        "sourceFile": "dist/index.js",
-        "className": "nodeClass",
-        "displayName": "SmartSuite",
-        "description": "Interact with SmartSuite API"
-      },
-      "smartSuiteTrigger": {
-        "sourceFile": "dist/index.js",
-        "className": "triggerClass",
-        "displayName": "On new or updated SmartSuite record",
-        "description": "Poll for new or updated records in SmartSuite"
-      }
-    }
+    "n8nNodesApiVersion": 1,
+    "nodes": [
+      "dist/nodes/SmartSuite/SmartSuite.node.js",
+      "dist/nodes/SmartSuite/SmartSuiteTrigger.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/SmartSuiteApi.credentials.js"
+    ]
   },
   "peerDependencies": {
     "n8n-workflow": "^1.82.0"
