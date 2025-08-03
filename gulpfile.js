@@ -5,6 +5,7 @@ import rename from 'gulp-rename';
 gulp.task('build:icons', () => {
   return gulp
     .src('src/nodes/SmartSuite/smartsuite.svg')
+    .pipe(rename('SmartSuite.svg'))
     .pipe(gulp.dest('dist/nodes/SmartSuite'));
 });
 
