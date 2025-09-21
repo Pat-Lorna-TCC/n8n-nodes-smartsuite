@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/__mocks__/**/*.ts",
+    "src/nodes/SmartSuite/__tests__/**/*.ts",
+    "src/nodes/SmartSuite/shared/__testHelpers__/**/*.ts",
+    "src/types/**/*.d.ts"
+  ]
+}

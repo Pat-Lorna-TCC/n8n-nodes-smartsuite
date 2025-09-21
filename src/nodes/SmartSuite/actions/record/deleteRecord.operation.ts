@@ -18,6 +18,7 @@ export const description = [
     type: 'string',
     default: '',
     required: true,
+    noDataExpression: false,
     displayOptions: { show: { resource: ['record'], operation: ['deleteRecord'] } },
     description: 'The SmartSuite Record ID to delete',
   },

@@ -158,6 +158,30 @@ We will respond to security reports A.S.A.P.
 - [n8n Community Forum](https://community.n8n.io/)
 - [n8n AI Functionality Documentation](https://docs.n8n.io/advanced-ai/)
 
+---
+
+🍣 Support This Work 🍺
+
+Found value with this n8n Community Node?
+
+👉 Buy us a sushi (or beer): https://Hi.TheCoolestCouple.com/BuyUsSushi
+
+We spent a considerable amount of time creating this n8n Community Node. If you find value in this project, please consider buying us a sushi (or beer) to support our work.
+
+That will help us maintain and improve the resources available for free.
+
+Or if you wish to make a PayPal donation, you can do so here:
+
+👉 https://www.paypal.com/donate/?hosted_button_id=W474HGUFUZ7JN
+
+Please note that donations are purely voluntary and not tax-deductible, but we thank you in advance. 
+
+---
+
 ## License
 
 MIT License - see the [LICENSE](LICENSE) file for details
+
+---
+
+**Built by The Coolest Couple 😎 with ❤️ using n8n, and SmartSuite API**

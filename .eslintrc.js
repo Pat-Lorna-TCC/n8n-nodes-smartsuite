@@ -4,7 +4,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: ['./tsconfig.eslint.json'], // <- point ESLint to the dedicated config
     tsconfigRootDir: __dirname,
   },
   plugins: ['@typescript-eslint', 'n8n-nodes-base'],
@@ -62,24 +62,28 @@ module.exports = {
     },
     {
       files: ['src/__mocks__/**/*.ts', 'src/types/**/*.d.ts'],
+      parserOptions: { project: null }, // <- disable type-aware parsing
       rules: {
-        // Allow `any` in mocks and type declarations
         '@typescript-eslint/no-explicit-any': 'off',
       },
     },
     {
       files: ['src/**/__tests__/**/*.ts'],
+      parserOptions: { project: null }, // <- disable type-aware parsing
+      env: {
+        jest: true, // or { 'vitest/globals': true } if you use Vitest
+      },
       rules: {
-        // Relax rules for test files
         '@typescript-eslint/no-require-imports': 'off',
         '@typescript-eslint/ban-ts-comment':    'off',
         '@typescript-eslint/no-unused-vars':   'off',
+        '@typescript-eslint/no-explicit-any':  'off',
       },
     },
     {
       files: ['src/nodes/SmartSuite/shared/__testHelpers__/**/*.ts'],
+      parserOptions: { project: null }, // <- disable type-aware parsing
       rules: {
-        // Turn off unused-vars in test helper mocks
         '@typescript-eslint/no-unused-vars': 'off',
       },
     },

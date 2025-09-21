@@ -42,14 +42,13 @@ export class SmartSuiteApi implements ICredentialType {
    */
   properties: INodeProperties[] = [
     {
-      displayName: 'API Token (No "Token" prefix)',
+      displayName: 'API Token (No "Token" Prefix)',
       name:        'apiKey',
       type:        'string',
       typeOptions: { password: true },
       default:     '',
       required:    true,
-      description:
-        'Your SmartSuite API key (raw token only—do not include "Token").',
+      description: 'Your SmartSuite API key (raw token only—do not include "Token")',
     },
     {
       displayName: 'Workspace ID',
@@ -57,8 +56,7 @@ export class SmartSuiteApi implements ICredentialType {
       type:        'string',
       default:     '',
       required:    true,
-      description:
-        'Your SmartSuite workspace ID (the 8-character identifier).',
+      description: 'Your SmartSuite workspace ID (the 8-character identifier)',
     },
     {
       displayName: 'Base URL',
