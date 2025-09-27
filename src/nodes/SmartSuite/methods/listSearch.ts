@@ -3,6 +3,7 @@
 import type { ILoadOptionsFunctions, INodeListSearchResult } from 'n8n-workflow';
 import { asIdString, isReservedField } from '../helpers/utils';
 import { apiRequest } from '../transport/smartSuiteApi';
+import { getCache, setCache, generateFieldsCacheKey } from '../helpers/cache';
 
 // Helper to map fields for resourceLocator (supports description property)
 const serializeField = (f: { slug: string; label: string; field_type: string }) => ({
@@ -76,11 +77,40 @@ export const searchTableFields = async function (
   const tableId = asIdString(this.getNodeParameter('tableId', 0));
   if (!tableId) return { results: [] };
 
-  const { structure = [] } = (await apiRequest.call(
-    this,
-    'GET',
-    `/applications/${tableId}/`,
-  )) as { structure?: Array<{ slug: string; label: string; field_type: string }> };
+  // Try to get solution ID for more specific caching
+  let solutionId = '';
+  try {
+    solutionId = asIdString(this.getNodeParameter('solutionId', 0)) || '';
+  } catch {
+    // Solution ID might not be available in all contexts
+  }
+
+  // Generate cache key
+  const cacheKey = generateFieldsCacheKey(solutionId || 'unknown', tableId);
+
+  // Check cache first
+  const cachedStructure = getCache<Array<{ slug: string; label: string; field_type: string }>>(cacheKey);
+
+  let structure: Array<{ slug: string; label: string; field_type: string }> = [];
+
+  if (cachedStructure) {
+    // Use cached data
+    structure = cachedStructure;
+  } else {
+    // Fetch from API if not cached
+    const response = (await apiRequest.call(
+      this,
+      'GET',
+      `/applications/${tableId}/`,
+    )) as { structure?: Array<{ slug: string; label: string; field_type: string }> };
+
+    structure = response.structure || [];
+
+    // Cache the structure for future use
+    if (structure.length > 0) {
+      setCache(cacheKey, structure);
+    }
+  }
 
   const filtered = structure.filter(
     (f) =>
@@ -100,11 +130,40 @@ export const searchTableFieldsMutable = async function (
   const tableId = asIdString(this.getNodeParameter('tableId', 0));
   if (!tableId) return { results: [] };
 
-  const { structure = [] } = (await apiRequest.call(
-    this,
-    'GET',
-    `/applications/${tableId}/`,
-  )) as { structure?: Array<{ slug: string; label: string; field_type: string }> };
+  // Try to get solution ID for more specific caching
+  let solutionId = '';
+  try {
+    solutionId = asIdString(this.getNodeParameter('solutionId', 0)) || '';
+  } catch {
+    // Solution ID might not be available in all contexts
+  }
+
+  // Generate cache key with 'mutable' suffix to differentiate from regular fields
+  const cacheKey = generateFieldsCacheKey(solutionId || 'unknown', tableId, 'mutable');
+
+  // Check cache first
+  const cachedStructure = getCache<Array<{ slug: string; label: string; field_type: string }>>(cacheKey);
+
+  let structure: Array<{ slug: string; label: string; field_type: string }> = [];
+
+  if (cachedStructure) {
+    // Use cached data
+    structure = cachedStructure;
+  } else {
+    // Fetch from API if not cached
+    const response = (await apiRequest.call(
+      this,
+      'GET',
+      `/applications/${tableId}/`,
+    )) as { structure?: Array<{ slug: string; label: string; field_type: string }> };
+
+    structure = response.structure || [];
+
+    // Cache the structure for future use
+    if (structure.length > 0) {
+      setCache(cacheKey, structure);
+    }
+  }
 
   // Exclude reserved fields
   const withoutReserved = structure.filter((f) => !isReservedField(f.slug));

@@ -78,26 +78,14 @@ export const fieldsInput: INodeProperties = {
         {
           displayName:      'Field',
           name:             'field',
-          type:             'resourceLocator',
+          type:             'options',
           noDataExpression: true,
-          default:          { mode: 'list', value: '' },
-          placeholder:      'Choose a field…',
-          typeOptions:      { loadOptionsDependsOn: ['solutionId.value', 'tableId.value'], searchListMethod: 'searchTableFieldsMutable', searchable: true },
-          modes: [
-            {
-              name:        'list',
-              displayName: 'From list',
-              type:        'list',
-              placeholder: 'Choose a field…',
-              typeOptions: { searchListMethod: 'searchTableFieldsMutable', searchable: true },
-            },
-            {
-              name:        'id',
-              displayName: 'By ID',
-              type:        'string',
-              placeholder: 'Field ID',
-            },
-          ],
+          typeOptions:      {
+            loadOptionsMethod:    'searchTableFieldsMutable',
+            loadOptionsDependsOn: ['solutionId.value', 'tableId.value'],
+          },
+          default:     '',
+          placeholder: 'Choose a field…',
           description: 'Select a field to set',
         },
         {

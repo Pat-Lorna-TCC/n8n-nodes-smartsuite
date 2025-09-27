@@ -37,7 +37,8 @@
     "lint": "eslint src/**/*.ts",
     "lintfix": "eslint src/**/*.ts --fix",
     "generate:tests": "node scripts/generate-tests.js",
-    "test": "jest"
+    "test": "jest",
+    "load-test": "node scripts/load-test-fields.js"
   },
   "publishConfig": {
     "access": "public"

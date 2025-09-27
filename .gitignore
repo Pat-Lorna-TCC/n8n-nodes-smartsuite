@@ -39,3 +39,13 @@ logs/
 
 # VSCode
 .vscode
+
+# Claude
+.claude/
+CLAUDE.md
+
+# Serena
+.serena/ 
+
+# PRPs
+PRPs/

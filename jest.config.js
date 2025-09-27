@@ -11,4 +11,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: ['**/src/nodes/SmartSuite/__tests__/**/*.test.ts'], // Match test files in the src directory
+  testTimeout: 15000, // 15 second timeout for tests
+  maxWorkers: 1, // Run tests serially to avoid timing conflicts
 };
