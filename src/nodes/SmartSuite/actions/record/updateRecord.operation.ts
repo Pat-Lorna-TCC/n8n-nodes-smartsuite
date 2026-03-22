@@ -16,7 +16,7 @@ export async function execute(
   const returnData: INodeExecutionData[] = [];
 
   for (let i = 0; i < items.length; i++) {
-    const recordId = this.getNodeParameter('recordId', i) as string;
+    const recordId = asIdString(this.getNodeParameter('recordId', i));
     if (!recordId.trim()) {
       throw new NodeOperationError(
         this.getNode(),
