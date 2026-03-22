@@ -1,7 +1,7 @@
 // src/nodes/SmartSuite/actions/record/getRecord.operation.ts
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import { debugLog } from '../../helpers/utils';
+import { debugLog, asIdString } from '../../helpers/utils';
 import { apiRequest } from '../../transport/smartSuiteApi';
 import { getSolutionId, getTableId } from '../../helpers/validation';
 
@@ -16,7 +16,7 @@ export async function execute(
   const returnData: INodeExecutionData[] = [];
 
   for (let i = 0; i < items.length; i++) {
-    const recordId = this.getNodeParameter('recordId', i) as string;
+    const recordId = asIdString(this.getNodeParameter('recordId', i));
     if (!recordId.trim()) {
       throw new NodeOperationError(
         this.getNode(),
