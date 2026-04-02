@@ -172,6 +172,66 @@ describe('SmartSuite – createRecord Operation', () => {
     );
   });
 
+  it('should send an array when value is a JSON array string (LinkedRecord multi-value)', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {
+        'fieldsUi': {
+          fieldsValues: [{ field: 'linked_records', value: '["id1","id2"]' }],
+        },
+      },
+      apiRequestResponse: { id: 'record-id' },
+      inputData: [{ json: {} }],
+    });
+
+    await createRecord.call(executeMock);
+
+    expect(apiRequest).toHaveBeenCalledWith(
+      'POST',
+      '/applications/dummy-table-id/records/',
+      { linked_records: ['id1', 'id2'] },
+    );
+  });
+
+  it('should keep raw string when value is not valid JSON', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {
+        'fieldsUi': {
+          fieldsValues: [{ field: 'title', value: 'plain text' }],
+        },
+      },
+      apiRequestResponse: { id: 'record-id' },
+      inputData: [{ json: {} }],
+    });
+
+    await createRecord.call(executeMock);
+
+    expect(apiRequest).toHaveBeenCalledWith(
+      'POST',
+      '/applications/dummy-table-id/records/',
+      { title: 'plain text' },
+    );
+  });
+
+  it('should pass through a non-string value (already parsed array) unchanged', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {
+        'fieldsUi': {
+          fieldsValues: [{ field: 'linked_records', value: ['id1', 'id2'] }],
+        },
+      },
+      apiRequestResponse: { id: 'record-id' },
+      inputData: [{ json: {} }],
+    });
+
+    await createRecord.call(executeMock);
+
+    expect(apiRequest).toHaveBeenCalledWith(
+      'POST',
+      '/applications/dummy-table-id/records/',
+      { linked_records: ['id1', 'id2'] },
+    );
+  });
+
   it('should call getSolutionId and getTableId once per execution', async () => {
     const { getSolutionId, getTableId } = require('../../../helpers/validation');
 

@@ -73,3 +73,15 @@ export const RESERVED_FIELDS = [
 export function isReservedField(slug: string): boolean {
   return (RESERVED_FIELDS as readonly string[]).includes(slug);
 }
+
+/**
+ * Attempt to JSON-parse a string. Returns the parsed value on success, null on failure.
+ * Used to normalize field values that may contain JSON arrays (e.g. LinkedRecord multi-value).
+ */
+export function tryParseJson(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
