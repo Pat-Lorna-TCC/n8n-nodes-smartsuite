@@ -119,7 +119,9 @@ export const searchTableFields = async function (
       f.slug.toLowerCase().includes(filter.toLowerCase()),
   );
 
-  const results = filtered.map(serializeField);
+  const results = filtered
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map(serializeField);
   return { results };
 };
 
@@ -178,7 +180,9 @@ export const searchTableFieldsMutable = async function (
     f.slug.toLowerCase().includes(filter.toLowerCase()),
   );
 
-  const results = filtered.map(serializeField);
+  const results = filtered
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map(serializeField);
   return { results };
 };
 
