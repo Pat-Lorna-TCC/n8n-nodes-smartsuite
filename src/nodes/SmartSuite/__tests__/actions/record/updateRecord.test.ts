@@ -157,6 +157,44 @@ describe('SmartSuite – updateRecord Operation', () => {
     expect(result).toEqual([{ json: {} }]);
   });
 
+  it('should send an array when value is a JSON array string (LinkedRecord multi-value)', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {
+        recordId: 'record-123',
+        'fieldsUiUpdate.fieldsValues': [{ field: 'linked_records', value: '["id1","id2"]' }],
+      },
+      apiRequestResponse: {},
+      inputData: [{ json: {} }],
+    });
+
+    await updateRecord.call(executeMock);
+
+    expect(apiRequest).toHaveBeenCalledWith(
+      'PATCH',
+      '/applications/dummy-table-id/records/record-123/',
+      { linked_records: ['id1', 'id2'] },
+    );
+  });
+
+  it('should keep raw string when value is not valid JSON', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {
+        recordId: 'record-123',
+        'fieldsUiUpdate.fieldsValues': [{ field: 'title', value: 'plain text' }],
+      },
+      apiRequestResponse: {},
+      inputData: [{ json: {} }],
+    });
+
+    await updateRecord.call(executeMock);
+
+    expect(apiRequest).toHaveBeenCalledWith(
+      'PATCH',
+      '/applications/dummy-table-id/records/record-123/',
+      { title: 'plain text' },
+    );
+  });
+
   it('should throw raw API error if apiRequest fails unexpectedly', async () => {
     (apiRequest as jest.Mock).mockRejectedValueOnce(new Error('API exploded'));
     jest.spyOn(utils, 'isReservedField').mockReturnValue(false);

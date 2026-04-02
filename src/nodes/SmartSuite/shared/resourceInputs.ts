@@ -91,9 +91,9 @@ export const fieldsInput: INodeProperties = {
         {
           displayName: 'Value',
           name:        'value',
-          type:        'string',
+          type:        'json',
           default:     '',
-          description: 'Value to assign to that field',
+          description: 'Value to assign to that field. Use a JSON array (e.g. ["id1","id2"]) for multi-value fields like LinkedRecord.',
         },
       ],
     },

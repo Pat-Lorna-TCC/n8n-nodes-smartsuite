@@ -1,7 +1,7 @@
 // src/nodes/SmartSuite/actions/record/upsertRecord.operation.ts
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import { debugLog, asIdString, isReservedField } from '../../helpers/utils';
+import { debugLog, asIdString, isReservedField, tryParseJson } from '../../helpers/utils';
 import { apiRequest } from '../../transport/smartSuiteApi';
 import { getTableId } from '../../helpers/validation';
 
@@ -74,7 +74,7 @@ export async function execute(
 
     // 6) Prepare payload
     const payload = fieldsArr.reduce((obj: IDataObject, { field, value }) => {
-      obj[asIdString(field)] = value;
+      obj[asIdString(field)] = typeof value === 'string' ? tryParseJson(value) ?? value : value;
       return obj;
     }, {} as IDataObject);
 
