@@ -9,7 +9,7 @@ import { createMockExecuteWithResources } from '../../../__tests__/helpers/mockR
 
 // Mock the validation helpers
 jest.mock('../../../helpers/validation', () => ({
-  getTableId: jest.fn().mockResolvedValue('dummy-table-id'),
+  getTableIdWithStructure: jest.fn().mockResolvedValue({ id: 'dummy-table-id', structure: [] }),
   getSolutionId: jest.fn().mockResolvedValue('dummy-solution-id'),
 }));
 
@@ -213,7 +213,7 @@ describe('SmartSuite – updateRecord Operation', () => {
 
   it('should resolve solutionId and tableId only once', async () => {
     const getSolutionIdSpy = jest.spyOn(validation, 'getSolutionId');
-    const getTableIdSpy = jest.spyOn(validation, 'getTableId');
+    const getTableIdWithStructureSpy = jest.spyOn(validation, 'getTableIdWithStructure');
     jest.spyOn(utils, 'isReservedField').mockReturnValue(false);
 
     executeMock = createMockExecuteWithResources({
@@ -231,7 +231,97 @@ describe('SmartSuite – updateRecord Operation', () => {
     await updateRecord.call(executeMock);
 
     expect(getSolutionIdSpy).toHaveBeenCalledTimes(1);
-    expect(getTableIdSpy).toHaveBeenCalledTimes(1);
+    expect(getTableIdWithStructureSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe('fullnamefield transformation', () => {
+    beforeEach(() => {
+      const { getTableIdWithStructure } = require('../../../helpers/validation');
+      (getTableIdWithStructure as jest.Mock).mockResolvedValue({
+        id: 'dummy-table-id',
+        structure: [{ slug: 'contact_name', label: 'Contact Name', field_type: 'fullnamefield' }],
+      });
+    });
+
+    it('should transform a "First Last" string to a fullname object', async () => {
+      executeMock = createMockExecuteWithResources({
+        parameters: {
+          recordId: 'record-123',
+          'fieldsUiUpdate.fieldsValues': [{ field: 'contact_name', value: 'John Doe' }],
+        },
+        apiRequestResponse: {},
+        inputData: [{ json: {} }],
+      });
+
+      await updateRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'PATCH',
+        '/applications/dummy-table-id/records/record-123/',
+        {
+          contact_name: {
+            sys_root: 'John Doe',
+            salutation: '',
+            first_name: 'John',
+            middle_name: '',
+            last_name: 'Doe',
+            suffix: '',
+          },
+        },
+      );
+    });
+
+    it('should pass through an already-object fullname value unchanged', async () => {
+      const existingObj = {
+        sys_root: 'John Doe',
+        salutation: '',
+        first_name: 'John',
+        middle_name: '',
+        last_name: 'Doe',
+        suffix: '',
+      };
+      executeMock = createMockExecuteWithResources({
+        parameters: {
+          recordId: 'record-123',
+          'fieldsUiUpdate.fieldsValues': [{ field: 'contact_name', value: JSON.stringify(existingObj) }],
+        },
+        apiRequestResponse: {},
+        inputData: [{ json: {} }],
+      });
+
+      await updateRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'PATCH',
+        '/applications/dummy-table-id/records/record-123/',
+        { contact_name: existingObj },
+      );
+    });
+
+    it('should not transform non-fullnamefield string fields', async () => {
+      const { getTableIdWithStructure } = require('../../../helpers/validation');
+      (getTableIdWithStructure as jest.Mock).mockResolvedValue({
+        id: 'dummy-table-id',
+        structure: [{ slug: 'title', label: 'Title', field_type: 'textfield' }],
+      });
+
+      executeMock = createMockExecuteWithResources({
+        parameters: {
+          recordId: 'record-123',
+          'fieldsUiUpdate.fieldsValues': [{ field: 'title', value: 'John Doe' }],
+        },
+        apiRequestResponse: {},
+        inputData: [{ json: {} }],
+      });
+
+      await updateRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'PATCH',
+        '/applications/dummy-table-id/records/record-123/',
+        { title: 'John Doe' },
+      );
+    });
   });
 
   it('should include itemIndex in error when recordId is blank in one item', async () => {

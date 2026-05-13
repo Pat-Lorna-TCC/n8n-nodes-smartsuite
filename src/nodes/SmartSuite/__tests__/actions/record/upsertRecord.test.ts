@@ -8,7 +8,7 @@ import * as validation from '../../../helpers/validation';
 import { createMockExecuteWithResources } from '../../../__tests__/helpers/mockResourceInputs';
 
 jest.mock('../../../helpers/validation', () => ({
-  getTableId: jest.fn().mockResolvedValue('dummy-table-id'),
+  getTableIdWithStructure: jest.fn().mockResolvedValue({ id: 'dummy-table-id', structure: [] }),
 }));
 
 jest.mock('../../../transport/smartSuiteApi', () => ({
@@ -126,13 +126,106 @@ describe('SmartSuite – upsertRecord Operation', () => {
     expect(result[0].json).toEqual({ id: 'abc', name: 'Upserted', created_at: 'today' });
   });
 
-  it('should throw if getTableId fails', async () => {
-    (validation.getTableId as jest.Mock).mockRejectedValueOnce(new Error('bad table'));
+  it('should throw if getTableIdWithStructure fails', async () => {
+    (validation.getTableIdWithStructure as jest.Mock).mockRejectedValueOnce(new Error('bad table'));
 
     executeMock = createMockExecuteWithResources({
       parameters: {},
     });
 
     await expect(upsertRecord.call(executeMock)).rejects.toThrow('bad table');
+  });
+
+  describe('fullnamefield transformation', () => {
+    beforeEach(() => {
+      (validation.getTableIdWithStructure as jest.Mock).mockResolvedValue({
+        id: 'dummy-table-id',
+        structure: [{ slug: 'contact_name', label: 'Contact Name', field_type: 'fullnamefield' }],
+      });
+    });
+
+    it('should transform a "First Last" string to a fullname object on create path', async () => {
+      (apiRequest as jest.Mock)
+        .mockResolvedValueOnce({ items: [] })
+        .mockResolvedValueOnce({ id: 'new-record-id' });
+
+      executeMock = createMockExecuteWithResources({
+        parameters: {
+          matchingField: 'email',
+          condition: 'equals',
+          matchValue: 'john@example.com',
+          'fieldsUiUpdate.fieldsValues': [{ field: 'contact_name', value: 'John Doe' }],
+        },
+      });
+
+      await upsertRecord.call(executeMock);
+
+      const createCall = (apiRequest as jest.Mock).mock.calls[1];
+      expect(createCall[0]).toBe('POST');
+      expect(createCall[2]).toEqual({
+        contact_name: {
+          sys_root: 'John Doe',
+          salutation: '',
+          first_name: 'John',
+          middle_name: '',
+          last_name: 'Doe',
+          suffix: '',
+        },
+      });
+    });
+
+    it('should transform a "First Last" string to a fullname object on update path', async () => {
+      (apiRequest as jest.Mock)
+        .mockResolvedValueOnce({ items: [{ id: 'existing-123' }] })
+        .mockResolvedValueOnce({ id: 'existing-123', updated: true });
+
+      executeMock = createMockExecuteWithResources({
+        parameters: {
+          matchingField: 'email',
+          condition: 'equals',
+          matchValue: 'john@example.com',
+          'fieldsUiUpdate.fieldsValues': [{ field: 'contact_name', value: 'John Doe' }],
+        },
+      });
+
+      await upsertRecord.call(executeMock);
+
+      const updateCall = (apiRequest as jest.Mock).mock.calls[1];
+      expect(updateCall[0]).toBe('PATCH');
+      expect(updateCall[2]).toEqual({
+        contact_name: {
+          sys_root: 'John Doe',
+          salutation: '',
+          first_name: 'John',
+          middle_name: '',
+          last_name: 'Doe',
+          suffix: '',
+        },
+      });
+    });
+
+    it('should not transform non-fullnamefield string fields', async () => {
+      (validation.getTableIdWithStructure as jest.Mock).mockResolvedValue({
+        id: 'dummy-table-id',
+        structure: [{ slug: 'title', label: 'Title', field_type: 'textfield' }],
+      });
+      (apiRequest as jest.Mock)
+        .mockResolvedValueOnce({ items: [] })
+        .mockResolvedValueOnce({ id: 'new-record-id' });
+
+      executeMock = createMockExecuteWithResources({
+        parameters: {
+          matchingField: 'email',
+          condition: 'equals',
+          matchValue: 'x@x.com',
+          'fieldsUiUpdate.fieldsValues': [{ field: 'title', value: 'John Doe' }],
+        },
+      });
+
+      await upsertRecord.call(executeMock);
+
+      const createCall = (apiRequest as jest.Mock).mock.calls[1];
+      expect(createCall[2]).toEqual({ title: 'John Doe' });
+    });
   });
 });
