@@ -4,7 +4,7 @@ import rename from 'gulp-rename';
 // 1) Node icons (corrected path)
 gulp.task('build:icons', () => {
   return gulp
-    .src('src/nodes/SmartSuite/smartsuite.svg')
+    .src('src/nodes/SmartSuite/SmartSuite.svg')
     .pipe(rename('SmartSuite.svg'))
     .pipe(gulp.dest('dist/nodes/SmartSuite'));
 });
@@ -12,7 +12,7 @@ gulp.task('build:icons', () => {
 // 2) Credential icon (corrected path)
 gulp.task('build:credential-icon', () => {
   return gulp
-    .src('src/nodes/SmartSuite/smartsuite.svg')
+    .src('src/nodes/SmartSuite/SmartSuite.svg')
     .pipe(rename('SmartSuiteApi.svg'))
     .pipe(gulp.dest('dist/credentials'));
 });
