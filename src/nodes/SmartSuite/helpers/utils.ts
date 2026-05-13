@@ -85,3 +85,55 @@ export function tryParseJson(value: string): unknown {
     return null;
   }
 }
+
+export interface SmartSuiteFullName {
+  sys_root: string;
+  salutation: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  suffix: string;
+}
+
+/**
+ * Converts a full name string (e.g. "John Doe") into the SmartSuite
+ * fullnamefield object format. If the input is already an object with
+ * the expected keys, it is normalized and passed through.
+ */
+export function parseFullName(value: unknown): SmartSuiteFullName {
+  if (typeof value === 'object' && value !== null) {
+    const v = value as Record<string, unknown>;
+    return {
+      sys_root:    String(v.sys_root    ?? ''),
+      salutation:  String(v.salutation  ?? ''),
+      first_name:  String(v.first_name  ?? ''),
+      middle_name: String(v.middle_name ?? ''),
+      last_name:   String(v.last_name   ?? ''),
+      suffix:      String(v.suffix      ?? ''),
+    };
+  }
+  const str = String(value ?? '').trim();
+  const parts = str.split(/\s+/).filter(Boolean);
+  let firstName = '';
+  let middleName = '';
+  let lastName = '';
+  if (parts.length === 0) {
+    // no-op — all empty
+  } else if (parts.length === 1) {
+    firstName = parts[0];
+  } else if (parts.length === 2) {
+    [firstName, lastName] = parts;
+  } else {
+    firstName  = parts[0];
+    lastName   = parts[parts.length - 1];
+    middleName = parts.slice(1, -1).join(' ');
+  }
+  return {
+    sys_root:    str,
+    salutation:  '',
+    first_name:  firstName,
+    middle_name: middleName,
+    last_name:   lastName,
+    suffix:      '',
+  };
+}

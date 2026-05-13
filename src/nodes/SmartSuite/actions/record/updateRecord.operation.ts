@@ -1,15 +1,16 @@
 // src/nodes/SmartSuite/actions/record/updateRecord.operation.ts
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import { debugLog, asIdString, isReservedField, tryParseJson } from '../../helpers/utils';
+import { debugLog, asIdString, isReservedField, tryParseJson, parseFullName } from '../../helpers/utils';
 import { apiRequest } from '../../transport/smartSuiteApi';
-import { getSolutionId, getTableId } from '../../helpers/validation';
+import { getSolutionId, getTableIdWithStructure } from '../../helpers/validation';
 
 export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
-  const solutionId = await getSolutionId.call(this, 0);
-  const tableId    = await getTableId.call(this, 0);
+  const solutionId                 = await getSolutionId.call(this, 0);
+  const { id: tableId, structure } = await getTableIdWithStructure.call(this, 0);
+  const fieldTypeMap               = new Map(structure.map((f) => [f.slug, f.field_type]));
 
   debugLog('[Record] updateRecord.execute called', this.getNode().parameters, 2);
   const items      = this.getInputData();
@@ -53,7 +54,12 @@ export async function execute(
 
     // Build request payload
     const payload = fieldsArr.reduce((obj: IDataObject, { field, value }) => {
-      obj[asIdString(field)] = typeof value === 'string' ? tryParseJson(value) ?? value : value;
+      const slug = asIdString(field);
+      let processed: unknown = typeof value === 'string' ? tryParseJson(value) ?? value : value;
+      if (fieldTypeMap.get(slug) === 'fullnamefield' && typeof processed === 'string') {
+        processed = parseFullName(processed);
+      }
+      obj[slug] = processed as IDataObject[string];
       return obj;
     }, {});
 

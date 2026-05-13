@@ -8,7 +8,7 @@ import { createMockExecuteWithResources } from '../../../__tests__/helpers/mockR
 // Mock validation helpers
 jest.mock('../../../helpers/validation', () => ({
   getSolutionId: jest.fn().mockResolvedValue('dummy-solution-id'),
-  getTableId: jest.fn().mockResolvedValue('dummy-table-id'),
+  getTableIdWithStructure: jest.fn().mockResolvedValue({ id: 'dummy-table-id', structure: [] }),
 }));
 
 // Mock transport apiRequest
@@ -232,8 +232,8 @@ describe('SmartSuite – createRecord Operation', () => {
     );
   });
 
-  it('should call getSolutionId and getTableId once per execution', async () => {
-    const { getSolutionId, getTableId } = require('../../../helpers/validation');
+  it('should call getSolutionId and getTableIdWithStructure once per execution', async () => {
+    const { getSolutionId, getTableIdWithStructure } = require('../../../helpers/validation');
 
     executeMock = createMockExecuteWithResources({
       apiRequestResponse: { id: 'record-id' },
@@ -248,6 +248,112 @@ describe('SmartSuite – createRecord Operation', () => {
     await createRecord.call(executeMock);
 
     expect(getSolutionId).toHaveBeenCalledTimes(1);
-    expect(getTableId).toHaveBeenCalledTimes(1);
+    expect(getTableIdWithStructure).toHaveBeenCalledTimes(1);
+  });
+
+  describe('fullnamefield transformation', () => {
+    beforeEach(() => {
+      const { getTableIdWithStructure } = require('../../../helpers/validation');
+      (getTableIdWithStructure as jest.Mock).mockResolvedValue({
+        id: 'dummy-table-id',
+        structure: [{ slug: 'contact_name', label: 'Contact Name', field_type: 'fullnamefield' }],
+      });
+    });
+
+    it('should transform a "First Last" string to a fullname object', async () => {
+      executeMock = createMockExecuteWithResources({
+        parameters: { 'fieldsUi': { fieldsValues: [{ field: 'contact_name', value: 'John Doe' }] } },
+        apiRequestResponse: { id: 'record-id' },
+        inputData: [{ json: {} }],
+      });
+
+      await createRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'POST',
+        '/applications/dummy-table-id/records/',
+        {
+          contact_name: {
+            sys_root: 'John Doe',
+            salutation: '',
+            first_name: 'John',
+            middle_name: '',
+            last_name: 'Doe',
+            suffix: '',
+          },
+        },
+      );
+    });
+
+    it('should pass through an already-object fullname value unchanged', async () => {
+      const existingObj = {
+        sys_root: 'John Doe',
+        salutation: '',
+        first_name: 'John',
+        middle_name: '',
+        last_name: 'Doe',
+        suffix: '',
+      };
+      executeMock = createMockExecuteWithResources({
+        parameters: { 'fieldsUi': { fieldsValues: [{ field: 'contact_name', value: JSON.stringify(existingObj) }] } },
+        apiRequestResponse: { id: 'record-id' },
+        inputData: [{ json: {} }],
+      });
+
+      await createRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'POST',
+        '/applications/dummy-table-id/records/',
+        { contact_name: existingObj },
+      );
+    });
+
+    it('should handle three-part names with middle name', async () => {
+      executeMock = createMockExecuteWithResources({
+        parameters: { 'fieldsUi': { fieldsValues: [{ field: 'contact_name', value: 'Mary Jane Watson' }] } },
+        apiRequestResponse: { id: 'record-id' },
+        inputData: [{ json: {} }],
+      });
+
+      await createRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'POST',
+        '/applications/dummy-table-id/records/',
+        {
+          contact_name: {
+            sys_root: 'Mary Jane Watson',
+            salutation: '',
+            first_name: 'Mary',
+            middle_name: 'Jane',
+            last_name: 'Watson',
+            suffix: '',
+          },
+        },
+      );
+    });
+
+    it('should not transform non-fullnamefield string fields', async () => {
+      const { getTableIdWithStructure } = require('../../../helpers/validation');
+      (getTableIdWithStructure as jest.Mock).mockResolvedValue({
+        id: 'dummy-table-id',
+        structure: [{ slug: 'title', label: 'Title', field_type: 'textfield' }],
+      });
+
+      executeMock = createMockExecuteWithResources({
+        parameters: { 'fieldsUi': { fieldsValues: [{ field: 'title', value: 'John Doe' }] } },
+        apiRequestResponse: { id: 'record-id' },
+        inputData: [{ json: {} }],
+      });
+
+      await createRecord.call(executeMock);
+
+      expect(apiRequest).toHaveBeenCalledWith(
+        'POST',
+        '/applications/dummy-table-id/records/',
+        { title: 'John Doe' },
+      );
+    });
   });
 });
