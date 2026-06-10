@@ -16,11 +16,12 @@ export async function execute(
   const returnData: INodeExecutionData[] = [];
 
   for (let i = 0; i < items.length; i++) {
-    const recordId = asIdString(this.getNodeParameter('recordId', i));
+    const rawRecordId = this.getNodeParameter('recordId', i);
+    const recordId = asIdString(rawRecordId);
     if (!recordId.trim()) {
       throw new NodeOperationError(
         this.getNode(),
-        'Record ID is required for Get Record operation.',
+        `Record ID is required for Get Record operation. Received: ${JSON.stringify(rawRecordId)}`,
         { itemIndex: i },
       );
     }

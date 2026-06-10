@@ -59,6 +59,7 @@ describe('SmartSuite – updateRecord Operation', () => {
     await expect(updateRecord.call(executeMock)).rejects.toThrow(
       'Record ID is required for Update Record operation.',
     );
+    await expect(updateRecord.call(executeMock)).rejects.toThrow('Received: "  "');
   });
 
   it('should throw error if no fields provided', async () => {
@@ -342,5 +343,21 @@ describe('SmartSuite – updateRecord Operation', () => {
       expect(err).toBeInstanceOf(NodeOperationError);
       expect(err.context?.itemIndex).toBe(1);
     }
+  });
+
+  it('should include undefined in error message when recordId is undefined', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {},
+      inputData: [{ json: {} }],
+    });
+
+    const getNodeParam = jest.spyOn(executeMock, 'getNodeParameter');
+    getNodeParam.mockImplementation((param, index) => {
+      if (param === 'recordId') return undefined;
+      if (param === 'fieldsUiUpdate.fieldsValues') return [{ field: 'f', value: 'v' }];
+      return undefined;
+    });
+
+    await expect(updateRecord.call(executeMock)).rejects.toThrow('Received: undefined');
   });
 });

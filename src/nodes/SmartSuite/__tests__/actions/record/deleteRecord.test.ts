@@ -97,6 +97,19 @@ describe('SmartSuite – deleteRecord Operation', () => {
     await expect(deleteRecord.call(executeMock)).rejects.toThrow(
       'Record ID is required for Delete Record operation.',
     );
+    await expect(deleteRecord.call(executeMock)).rejects.toThrow('Received: "   "');
+  });
+
+  it('should include undefined in error message when recordId is undefined', async () => {
+    executeMock = createMockExecuteWithResources({
+      apiRequestResponse: {},
+      inputData: [{ json: {} }],
+    });
+
+    // @ts-ignore
+    executeMock.getNodeParameter = () => undefined;
+
+    await expect(deleteRecord.call(executeMock)).rejects.toThrow('Received: undefined');
   });
 
   it('should throw "Record ID is not valid" when API returns 404 status', async () => {
