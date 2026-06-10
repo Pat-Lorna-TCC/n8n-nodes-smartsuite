@@ -92,6 +92,24 @@ describe('SmartSuite – getRecord Operation', () => {
     await expect(getRecord.call(executeMock)).rejects.toThrow(
       'Record ID is required for Get Record operation.'
     );
+    await expect(getRecord.call(executeMock)).rejects.toThrow('Received: "   "');
+  });
+
+  it('should include undefined in error message when recordId is undefined', async () => {
+    executeMock = createMockExecuteWithResources({
+      parameters: {},
+      apiRequestResponse: {},
+      inputData: [{ json: {} }]
+    });
+
+    jest.spyOn(executeMock, 'getNodeParameter').mockImplementation((name: string) => {
+      if (name === 'recordId') return undefined;
+      if (name === 'hydrated') return false;
+      if (name === 'solutionId') return 'dummy-solution-id';
+      return undefined;
+    });
+
+    await expect(getRecord.call(executeMock)).rejects.toThrow('Received: undefined');
   });
 
   it('should return an empty array when there are no input items', async () => {
